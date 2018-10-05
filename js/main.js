@@ -1,18 +1,20 @@
 !function () {
+    var duration = 20
     function writeCode(prefix, code, fn) {
         let container = document.querySelector('#code')
         let styleTag = document.querySelector('#styleTag')
         let n = 0
-        let id = setInterval(() => {
+        setTimeout(function run() {
             n += 1
             container.innerHTML = code.substring(0, n)
             styleTag.innerHTML = code.substring(0, n)
             container.scrollTop = container.scrollHeight
-            if (n >= code.length) {
-                window.clearInterval(id)
+            if (n < code.length) {
+                setTimeout(run, duration)
+            } else {
                 fn && fn.call()
             }
-        }, 10)
+        }, duration)
     }
     let code = `
     /*
@@ -178,4 +180,22 @@
     */
 `
     writeCode('', code)
+
+    $('.actions').on('click', 'button', function (e) {
+        let $button = $(e.currentTarget)
+        let speed = $button.attr('data-speed')
+        $button.addClass('active')
+            .siblings('.active').removeClass('active')
+        switch(speed){
+            case 'slow':
+                duration = 100
+                break
+            case 'normal':
+                duration = 50
+            case 'fast': 
+                duration = 10
+                break
+        }
+    })
+
 }.call()
